@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using music_manager_starter.Data;
-using music_manager_starter.Data.Models;
+using music_manager_starter.Shared;
 using System;
 
 namespace music_manager_starter.Server.Controllers

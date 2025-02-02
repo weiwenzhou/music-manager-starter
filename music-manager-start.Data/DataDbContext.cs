@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using music_manager_starter.Data.Models;
+using music_manager_starter.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
