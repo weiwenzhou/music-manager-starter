@@ -16,6 +16,6 @@ You need to have the .NET 8 SDK installed. Be sure to download the latest versio
 
 Use the latest version of Visual Studio 2022: https://visualstudio.microsoft.com/downloads/
 
-Install the node packages before building the solution by using ```npm install``
+Install the node packages in Client before building the solution by using ```npm install``
 
 

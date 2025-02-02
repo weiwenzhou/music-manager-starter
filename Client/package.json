@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "buildcss:dev": "cross-env TAILWIND_MODE=build npx tailwindcss -i ./Styles/app.css -o ./Client/wwwroot/css/app.css",
-    "buildcss:release": "cross-env NODE_ENV=production npx tailwindcss -i ./Styles/app.css -o ./Client/wwwroot/css/app.css"
+    "buildcss:dev": "cross-env TAILWIND_MODE=build npx tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css",
+    "buildcss:release": "cross-env NODE_ENV=production npx tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css"
   
 },
   "author": "",
