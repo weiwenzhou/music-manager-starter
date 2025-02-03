@@ -26,7 +26,7 @@
                 @foreach (var (song, index) in FilteredSongs.Select((song, i) => (song, i)))
                 {
                     <tr class="border-b hover:bg-gray-600 @(index % 2 == 0 ? "bg-gray-700" : "bg-gray-800")">
-                        <td class="px-4 py-2 text-gray-200">@song.Title</td>
+                        <td class="px-4 py-2 text-gray-200"><a href="/song/@song.Id" class="underline">@song.Title</a></td>
                         <td class="px-4 py-2 text-gray-200">@song.Artist</td>
                         <td class="px-4 py-2 text-gray-200">@song.Album</td>
                         <td class="px-4 py-2 text-gray-200">@song.Genre</td>
