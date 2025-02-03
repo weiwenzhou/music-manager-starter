@@ -8,7 +8,7 @@
         <div class="top-bar px-6 py-4 bg-gray-900 text-white flex items-center justify-between">
             <h1 class="text-xl font-semibold">Music</h1>
             <div class="relative">
-                <input type="text" placeholder="Search..." class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none" @bind="searchQuery" @onkeydown="HandleKeyDown">
+                <input type="text" placeholder="Search..." class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none" @bind="searchQuery" @bind:event="oninput" @onkeydown="HandleKeyDown">
                 <span class="absolute right-3 top-3 text-gray-400">
                     <i class="fas fa-search"></i>
                 </span>
@@ -22,15 +22,15 @@
 </div>
 
 @code {
-	private string searchQuery = string.Empty;
+    private string searchQuery = string.Empty;
 
-	private void HandleKeyDown(KeyboardEventArgs e)
-	{
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
         // If the user presses Enter and the search query is not empty
         if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(searchQuery))
-		{   
-			// Redirect to the search page with the search query
+        {   
+            // Redirect to the search page with the search query
             NavigationManager.NavigateTo($"/search?query={Uri.EscapeDataString(searchQuery)}", forceLoad: true);
-		}
+        }
 	}
 }
