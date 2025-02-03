@@ -7,26 +7,29 @@
     <h2 class="text-xl font-semibold text-white">Add New Song</h2>
     <EditForm Model="newSong" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
-        <ValidationSummary />
 
         <div class="mb-4">
             <label class="block text-gray-200">Title</label>
             <InputText @bind-Value="newSong.Title" class="mt-1 block w-full p-2 border rounded" />
+            <ValidationMessage For="@(() => newSong.Title)" class="validation-message text-red-500 font-semibold" />
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-200">Artist</label>
             <InputText @bind-Value="newSong.Artist" class="mt-1 block w-full p-2 border rounded" />
+            <ValidationMessage For="@(() => newSong.Artist)" class="validation-message text-red-500 font-semibold" />
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-200">Album</label>
             <InputText @bind-Value="newSong.Album" class="mt-1 block w-full p-2 border rounded" />
+            <ValidationMessage For="@(() => newSong.Album)" class="validation-message text-red-500 font-semibold" />
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-200">Genre</label>
             <InputText @bind-Value="newSong.Genre" class="mt-1 block w-full p-2 border rounded" />
+            <ValidationMessage For="@(() => newSong.Genre)" class="validation-message text-red-500 font-semibold" />
         </div>
 
         <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Add Song</button>
