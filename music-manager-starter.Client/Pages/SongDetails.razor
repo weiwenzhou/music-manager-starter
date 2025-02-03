@@ -32,8 +32,17 @@
     <div class="text-center">
         <h1 class="text-4xl font-semibold text-indigo-500">@song.Title</h1>
         <p class="text-xl text-gray-300 mt-2">by @song.Artist</p>
+
         <div class="mt-4">
-            <img src="@albumImage" alt="Album Cover" class="rounded-lg shadow-lg w-60 mx-auto" />
+		    @if (song?.AlbumArt != null)
+		    {
+			
+			    <img src="@albumImage" alt="Album Cover" class="rounded-lg shadow-lg w-60 mx-auto" />
+		    } 
+            else 
+            {
+			    <p class="text-gray-400">No album art available.</p>
+            }
         </div>
     </div>
 
