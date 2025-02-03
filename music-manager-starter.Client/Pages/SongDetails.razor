@@ -7,21 +7,36 @@
     [Parameter] public string id { get; set; } = string.Empty;
     private Song song = new Song();
     private string? albumImage;
+    private bool isDeleting = false; // Prevent multiple delete requests
 
     protected override async Task OnInitializedAsync()
     {
         song = await Http.GetFromJsonAsync<Song>($"api/songs/{id}") ?? new Song();
 
-		if (song?.AlbumArt != null)
-		{
-			albumImage = $"data:{song.AlbumArtContentType};base64,{Convert.ToBase64String(song.AlbumArt)}";
-		}
+        if (song?.AlbumArt != null)
+        {
+            albumImage = $"data:{song.AlbumArtContentType};base64,{Convert.ToBase64String(song.AlbumArt)}";
+        }
     }
 
     private void GoBack()
     {
         NavigationManager.NavigateTo("/");
     }
+
+    private async Task DeleteSong()
+    {
+        isDeleting = true;
+        var response = await Http.DeleteAsync($"api/songs/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            GoBack();
+        }
+		else
+		{
+			isDeleting = false;
+		}
+	}
 }
 
 <div class="bg-gray-700 mt-8 p-6 pt-12 rounded-lg shadow-lg max-w-3xl mx-auto text-gray-100">
@@ -55,5 +70,12 @@
             <span class="font-medium text-gray-300">Genre:</span>
             <span class="text-gray-200">@song?.Genre</span>
         </div>
+    </div>
+
+    <div class="mt-6 flex justify-center">
+        <button class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg"
+                @onclick="DeleteSong" disabled="@isDeleting">
+                @(isDeleting ? "Deleting..." : "Delete Song")
+        </button>
     </div>
 </div>
