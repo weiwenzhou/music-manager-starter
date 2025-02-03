@@ -45,6 +45,13 @@
             </div>
         }
 
+		@if (imageMessage != null)
+		{
+			<div class="mt-2 text-red-500 font-semibold">
+                @imageMessage
+            </div>
+		}
+
         <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Add Song</button>
     </EditForm>
 
@@ -59,6 +66,7 @@
     private string message = string.Empty;
     private string? fileName;
     private string? imagePreview;
+    private string? imageMessage;
 
     private async Task HandleValidSubmit()
     {
@@ -67,6 +75,8 @@
         {
             message = "Song added successfully!";
             newSong = new Song(); 
+            fileName = null;
+            imagePreview = null;
         }
         else
         {
@@ -78,6 +88,15 @@
     {
         var file = e.File;
         if (file != null) {
+			// Check if the file is an image
+			if (!file.ContentType.Contains("image"))
+			{
+				imageMessage = "Invalid file type. Please upload an image file.";
+				return;
+			}
+			// Clear any previous image message
+			imageMessage = null;
+
             // Get the file name
             fileName = file.Name; 
 
