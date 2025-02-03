@@ -1,0 +1,88 @@
+﻿@page "/search"
+@using music_manager_starter.Shared.Models
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div class="p-6">
+    <h2 class="text-3xl font-semibold text-white">Search Results</h2>
+</div>
+
+<div class="mb-4 px-6 space-y-4">
+    @if (FilteredSongs.Any())
+    {
+        <h1 class="text-xl font-semibold text-white">Songs</h1>
+        <table class="w-full table-auto border-collapse border border-gray-200">
+            <thead>
+                <tr class="bg-gray-800 border-b text-left text-white">
+                    <th class="px-4 py-2"> Title </th>
+                    <th class="px-4 py-2"> Artist </th>
+                    <th class="px-4 py-2"> Album </th>
+                    <th class="px-4 py-2"> Genre </th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                @foreach (var (song, index) in FilteredSongs.Select((song, i) => (song, i)))
+                {
+                    <tr class="border-b hover:bg-gray-600 @(index % 2 == 0 ? "bg-gray-700" : "bg-gray-800")">
+                        <td class="px-4 py-2 text-gray-200">@song.Title</td>
+                        <td class="px-4 py-2 text-gray-200">@song.Artist</td>
+                        <td class="px-4 py-2 text-gray-200">@song.Album</td>
+                        <td class="px-4 py-2 text-gray-200">@song.Genre</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p colspan="4" class="px-4 py-2 text-red-500">No songs found matching your search.</p>
+    }
+        
+</div>
+
+@code {
+    private List<Song> Songs { get; set; } = new List<Song>();
+    private List<Song> FilteredSongs { get; set; } = new List<Song>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetFromJsonAsync<List<Song>>("api/songs");
+        if (response != null)
+        {
+            Songs = response;
+        }
+
+        // Get the search query from the URL
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var SearchQuery = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("query");
+
+        if (!string.IsNullOrEmpty(SearchQuery))
+        {
+            FilterSongs(SearchQuery);
+        }
+        else
+        {
+            FilteredSongs = Songs;
+        }
+    }
+
+    private void FilterSongs(string query)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
+            FilteredSongs = Songs;
+        }
+        else
+        {
+            // Filter songs by title, artist, album, or genre (case-insensitive)
+            FilteredSongs = Songs
+                .Where(song => song.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                               song.Artist.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                               song.Album.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                               song.Genre.Contains(query, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+}
