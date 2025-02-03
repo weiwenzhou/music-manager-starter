@@ -25,5 +25,12 @@ namespace music_manager_starter.Shared.Models
 
         public byte[]? AlbumArt { get; set; }
         public string? AlbumArtContentType { get; set; }
+
+        // Rating fields
+        public int TotalRatingSum { get; set; } // Sum of all ratings
+        public int RatingCount { get; set; } // Number of ratings
+
+        // Calculated average rating
+        public double AverageRating => RatingCount == 0 ? 0 : (double)TotalRatingSum / RatingCount;
     }
 }
