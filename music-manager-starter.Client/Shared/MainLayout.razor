@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager Navigation
+@inject NavigationManager NavigationManager
 
 
 <div class="flex h-screen">
@@ -30,7 +30,7 @@
         if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(searchQuery))
 		{
 			// Redirect to the search page with the search query
-            Navigation.NavigateTo($"/search?query={Uri.EscapeDataString(searchQuery)}");
+            NavigationManager.NavigateTo($"/search?query={Uri.EscapeDataString(searchQuery)}");
 		}
 	}
 }

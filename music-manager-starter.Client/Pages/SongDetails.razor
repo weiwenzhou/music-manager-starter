@@ -1,6 +1,6 @@
 ﻿@page "/song/{id}"
 @inject HttpClient Http
-@inject NavigationManager Navigation
+@inject NavigationManager NavigationManager
 @using music_manager_starter.Shared.Models
 
 @code {
@@ -20,7 +20,7 @@
 
     private void GoBack()
     {
-        Navigation.NavigateTo("/");
+        NavigationManager.NavigateTo("/");
     }
 }
 
