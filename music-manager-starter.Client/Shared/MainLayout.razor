@@ -26,11 +26,11 @@
 
 	private void HandleKeyDown(KeyboardEventArgs e)
 	{
-		// If the user presses Enter and the search query is not empty
+        // If the user presses Enter and the search query is not empty
         if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(searchQuery))
-		{
+		{   
 			// Redirect to the search page with the search query
-            NavigationManager.NavigateTo($"/search?query={Uri.EscapeDataString(searchQuery)}");
+            NavigationManager.NavigateTo($"/search?query={Uri.EscapeDataString(searchQuery)}", forceLoad: true);
 		}
 	}
 }
