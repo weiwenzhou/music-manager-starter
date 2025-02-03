@@ -4,12 +4,18 @@
 @using music_manager_starter.Shared.Models
 
 @code {
-	[Parameter] public string id { get; set; } = string.Empty;
-	private Song song = new Song();
+    [Parameter] public string id { get; set; } = string.Empty;
+    private Song song = new Song();
+    private string? albumImage;
 
     protected override async Task OnInitializedAsync()
     {
         song = await Http.GetFromJsonAsync<Song>($"api/songs/{id}");
+
+		if (song?.AlbumArt != null)
+		{
+			albumImage = $"data:{song.AlbumArtContentType};base64,{Convert.ToBase64String(song.AlbumArt)}";
+		}
     }
 
     private void GoBack()
@@ -26,6 +32,9 @@
     <div class="text-center">
         <h1 class="text-4xl font-semibold text-indigo-500">@song.Title</h1>
         <p class="text-xl text-gray-300 mt-2">by @song.Artist</p>
+        <div class="mt-4">
+            <img src="@albumImage" alt="Album Cover" class="rounded-lg shadow-lg w-60 mx-auto" />
+        </div>
     </div>
 
     <div class="mt-8 space-y-4">
