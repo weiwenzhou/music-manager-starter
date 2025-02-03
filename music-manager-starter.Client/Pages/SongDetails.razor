@@ -1,0 +1,41 @@
+﻿@page "/song/{id}"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@using music_manager_starter.Shared.Models
+
+@code {
+	[Parameter] public string id { get; set; } = string.Empty;
+	private Song song = new Song();
+
+    protected override async Task OnInitializedAsync()
+    {
+        song = await Http.GetFromJsonAsync<Song>($"api/songs/{id}");
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
+
+<div class="bg-gray-700 mt-8 p-6 pt-12 rounded-lg shadow-lg max-w-3xl mx-auto text-gray-100">
+    <button class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg mb-4" @onclick="GoBack">
+        ← Back
+    </button>
+
+    <div class="text-center">
+        <h1 class="text-4xl font-semibold text-indigo-500">@song.Title</h1>
+        <p class="text-xl text-gray-300 mt-2">by @song.Artist</p>
+    </div>
+
+    <div class="mt-8 space-y-4">
+        <div class="flex justify-between text-xl">
+            <span class="font-medium text-gray-300">Album:</span>
+            <span class="text-gray-200">@song.Album</span>
+        </div>
+        <div class="flex justify-between text-xl">
+            <span class="font-medium text-gray-300">Genre:</span>
+            <span class="text-gray-200">@song.Genre</span>
+        </div>
+    </div>
+</div>

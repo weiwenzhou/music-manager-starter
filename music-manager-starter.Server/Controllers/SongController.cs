@@ -18,13 +18,13 @@ namespace music_manager_starter.Server.Controllers
         }
 
   
-        [HttpGet]
+        [HttpGet] // GET: api/Songs
         public async Task<ActionResult<IEnumerable<Song>>> GetSongs()
         {
             return await _context.Songs.ToListAsync();
         }
 
-        [HttpPost]
+        [HttpPost] // POST: api/Songs
         public async Task<ActionResult<Song>> PostSong(Song song)
         {
             if (song == null)
@@ -37,6 +37,17 @@ namespace music_manager_starter.Server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpGet("{id}")] // GET: api/Songs/5
+        public async Task<ActionResult<Song>> GetSong(Guid id)
+        {
+            var song = await _context.Songs.FindAsync(id);
+            if (song == null)
+            {
+                return NotFound();
+            }
+            return song;
         }
     }
 }
