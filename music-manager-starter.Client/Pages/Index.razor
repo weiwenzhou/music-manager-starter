@@ -4,11 +4,11 @@
 @inject HttpClient Http
 
 @code {
-    private List<Song> songs;
+	private List<Song> songs = new List<Song>();
 
     protected override async Task OnInitializedAsync()
     {
-        songs = await Http.GetFromJsonAsync<List<Song>>("api/songs");
+		songs = await Http.GetFromJsonAsync<List<Song>>("api/songs") ?? new List<Song>();
     }
 }
 
