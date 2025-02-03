@@ -10,7 +10,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        song = await Http.GetFromJsonAsync<Song>($"api/songs/{id}");
+        song = await Http.GetFromJsonAsync<Song>($"api/songs/{id}") ?? new Song();
 
 		if (song?.AlbumArt != null)
 		{
@@ -30,8 +30,8 @@
     </button>
 
     <div class="text-center">
-        <h1 class="text-4xl font-semibold text-indigo-500">@song.Title</h1>
-        <p class="text-xl text-gray-300 mt-2">by @song.Artist</p>
+        <h1 class="text-4xl font-semibold text-indigo-500">@song?.Title</h1>
+        <p class="text-xl text-gray-300 mt-2">by @song?.Artist</p>
 
         <div class="mt-4">
 		    @if (song?.AlbumArt != null)
@@ -49,11 +49,11 @@
     <div class="mt-8 space-y-4">
         <div class="flex justify-between text-xl">
             <span class="font-medium text-gray-300">Album:</span>
-            <span class="text-gray-200">@song.Album</span>
+            <span class="text-gray-200">@song?.Album</span>
         </div>
         <div class="flex justify-between text-xl">
             <span class="font-medium text-gray-300">Genre:</span>
-            <span class="text-gray-200">@song.Genre</span>
+            <span class="text-gray-200">@song?.Genre</span>
         </div>
     </div>
 </div>
