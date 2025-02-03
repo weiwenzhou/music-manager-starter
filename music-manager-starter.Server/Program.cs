@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using music_manager_starter.Data;
+using music_manager_starter.Server.Data;
 using System.Security.AccessControl;
 
 var builder = WebApplication.CreateBuilder(args);

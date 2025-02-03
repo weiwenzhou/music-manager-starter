@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\music-manager-starter.Shared.csproj" />
+    <ProjectReference Include="..\music-manager-starter.Shared\music-manager-starter.Shared.csproj" />
   </ItemGroup>
 	<Target Name="CheckForNpm" BeforeTargets="NpmInstall">
 		<Exec Command="npm -v" ContinueOnError="true">

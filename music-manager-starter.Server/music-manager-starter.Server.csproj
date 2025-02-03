@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>music-manager-starter.Server</RootNamespace>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -18,8 +19,8 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\music-manager-starter.Client.csproj" />
-    <ProjectReference Include="..\Shared\music-manager-starter.Shared.csproj" />
+    <ProjectReference Include="..\music-manager-starter.Client\music-manager-starter.Client.csproj" />
+    <ProjectReference Include="..\music-manager-starter.Shared\music-manager-starter.Shared.csproj" />
   </ItemGroup>
 
 

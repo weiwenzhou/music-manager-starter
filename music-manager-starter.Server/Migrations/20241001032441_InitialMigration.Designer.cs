@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using music_manager_starter.Data;
+using music_manager_starter.Server.Data;
 
 #nullable disable
 
-namespace music_manager_starter.Data.Migrations
+namespace music_manager_starter.Server.Migrations
 {
     [DbContext(typeof(DataDbContext))]
     [Migration("20241001032441_InitialMigration")]
