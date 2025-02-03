@@ -22,5 +22,8 @@ namespace music_manager_starter.Shared.Models
 
         [Required(ErrorMessage = "Genre is required")]
         public string Genre { get; set; } = string.Empty;
+
+        public byte[]? AlbumArt { get; set; }
+        public string? AlbumArtContentType { get; set; }
     }
 }
