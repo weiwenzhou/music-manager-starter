@@ -32,6 +32,19 @@
             <ValidationMessage For="@(() => newSong.Genre)" class="validation-message text-red-500 font-semibold" />
         </div>
 
+        <div class="mb-4">
+            <label class="block text-gray-200">Album Art</label>
+            <InputFile OnChange="HandleFileSelected" class="mt-1 block w-full p-2 border rounded" />
+        </div>
+
+        @if (fileName != null)
+        {
+            <div class="mt-2">
+                <p class="text-white">Uploaded: @fileName</p>
+                <img src="@imagePreview" alt="Album Art Preview" class="mt-2 max-w-xs" />
+            </div>
+        }
+
         <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Add Song</button>
     </EditForm>
 
@@ -44,6 +57,8 @@
 @code {
     private Song newSong = new Song();
     private string message = string.Empty;
+    private string? fileName;
+    private string? imagePreview;
 
     private async Task HandleValidSubmit()
     {
@@ -58,4 +73,25 @@
             message = "Error adding song. Please try again.";
         }
     }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null) {
+            // Get the file name
+            fileName = file.Name; 
+
+            // Get the image preview
+            var buffer = new byte[file.Size];
+            await file.OpenReadStream().ReadAsync(buffer);
+
+            // Set the byte array and content type to the new song
+            newSong.AlbumArt = buffer;
+            newSong.AlbumArtContentType = file.ContentType;
+
+            // Create preview URL
+			var base64 = Convert.ToBase64String(buffer);
+			imagePreview = $"data:{file.ContentType};base64,{base64}";
+        }
+	}
 }
