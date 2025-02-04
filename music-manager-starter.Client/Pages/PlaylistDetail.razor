@@ -8,45 +8,64 @@
     [Parameter] public string id { get; set; } = string.Empty;
     private Playlist playlist = new Playlist();
     private bool showAddSongForm = false;
+    private bool showDeleteSongConfirmation = false;
     private Guid selectedSongId = Guid.Empty;
     private List<Song> availableSongs = new List<Song>();
+    private string songTitleToDelete = string.Empty;
 
-	protected override async Task OnInitializedAsync()
-	{
-		playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
-
-		// Fetch list of available songs
-        availableSongs = await Http.GetFromJsonAsync<List<Song>>("api/songs") ?? new List<Song>();
-	}
-
-	private void GoBack()
-	{
-		NavigationManager.NavigateTo("/playlists");
-	}
-
-	private async Task AddSongFromAvailable()
-	{
-		if (selectedSongId == Guid.Empty)
-		{
-			return;
-		}
-		var response = await Http.PostAsync($"api/playlists/{playlist.Id}/songs/{selectedSongId}", null);
-		if (response.IsSuccessStatusCode)
-		{
-			playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
-			selectedSongId = Guid.Empty;
-			showAddSongForm = false;
-		}
-	}
-
-    private async Task RemoveSongFromPlaylist(Guid songId)
+    protected override async Task OnInitializedAsync()
     {
-        var response = await Http.DeleteAsync($"api/playlists/{playlist.Id}/songs/{songId}");
+        playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+
+        // Fetch list of available songs
+        availableSongs = await Http.GetFromJsonAsync<List<Song>>("api/songs") ?? new List<Song>();
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/playlists");
+    }
+
+    private async Task AddSongFromAvailable()
+    {
+        if (selectedSongId == Guid.Empty)
+        {
+            return;
+        }
+        var response = await Http.PostAsync($"api/playlists/{playlist.Id}/songs/{selectedSongId}", null);
         if (response.IsSuccessStatusCode)
         {
             playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+            selectedSongId = Guid.Empty;
+            showAddSongForm = false;
         }
     }
+
+    private async Task RemoveSongFromPlaylist()
+    {
+        var response = await Http.DeleteAsync($"api/playlists/{playlist.Id}/songs/{selectedSongId}");
+        if (response.IsSuccessStatusCode)
+        {
+            playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+
+            CancelDelete();
+
+        }
+    }
+
+	private void ShowDeleteConfirmationWindow(Guid songId, string songTitle)
+	{
+        songTitleToDelete = songTitle;
+        selectedSongId = songId;
+		showDeleteSongConfirmation = true;
+	}
+
+	private void CancelDelete()
+	{
+		showDeleteSongConfirmation = false;
+		selectedSongId = Guid.Empty;
+		songTitleToDelete = string.Empty;
+	}
 }
 
 <div class="p-6 text-white">
@@ -108,9 +127,7 @@
                             <td class="px-4 py-2 text-gray-200">@song.Album</td>
                             <td class="px-4 py-2 text-gray-200">@song.Genre</td>
                             <td class="px-4 py-2 text-gray-200">
-                                <button @onclick="() => RemoveSongFromPlaylist(song.Id)" class="bg-red-600 hover:bg-red-500 text-white rounded-lg px-4 py-2">
-                                    Delete
-                                </button>
+                                <button @onclick="() => ShowDeleteConfirmationWindow(song.Id, song.Title)" class="text-red-500 hover:text-red-400">Delete</button>
                             </td>
                         </tr>
                     }
@@ -123,3 +140,17 @@
         }
     </div>
 </div>
+
+@if (showDeleteSongConfirmation)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full">
+            <h2 class="text-2xl font-semibold text-gray-200">Confirm Deletion</h2>
+            <p class="text-gray-300 mt-2">Are you sure you want to delete the song "<strong>@songTitleToDelete</strong>" from this playlist?</p>
+            <div class="mt-4 flex justify-between">
+                <button @onclick="RemoveSongFromPlaylist" class="bg-red-600 text-white px-4 py-2 rounded">Yes, Delete</button>
+                <button @onclick="CancelDelete" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
