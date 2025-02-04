@@ -63,5 +63,26 @@ namespace music_manager_starter.Server.Controllers
             
             return NoContent(); // 204 No Content (successful deletion)
         }
+
+        [HttpPost("{id}/rate/{rating}")] // POST: api/Songs/5/rate/3
+        public async Task<ActionResult<Song>> RateSong(Guid id, int rating)
+        {
+            // Check it is a valid rating
+            if (rating < 1 || rating > 5)
+            {
+                return BadRequest("Rating must be between 1 and 5.");
+            }
+
+            var song = await _context.Songs.FindAsync(id);
+            if (song == null)
+            {
+                return NotFound();
+            }
+            song.TotalRatingSum += rating;
+            song.RatingCount++;
+            await _context.SaveChangesAsync();
+            
+            return Ok();
+        }
     }
 }

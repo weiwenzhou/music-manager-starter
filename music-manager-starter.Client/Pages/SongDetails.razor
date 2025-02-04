@@ -8,7 +8,8 @@
     private Song song = new Song();
     private string? albumImage;
     private bool isDeleting = false; // Prevent multiple delete requests
-	private bool showDeleteConfirmation = false;
+    private bool showDeleteConfirmation = false;
+    private int userRating = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,10 +34,45 @@
         {
             GoBack();
         }
-		else
+        else
+        {
+            isDeleting = false;
+        }
+    }
+
+    private async Task SubmitRating()
+    {
+        // Check if valid rating
+        if (userRating < 1 || userRating > 5)
+        {
+            return;
+        }
+
+        var response = await Http.PostAsync($"api/songs/{song.Id}/rate/{userRating}", null);
+        if (response.IsSuccessStatusCode)
 		{
-			isDeleting = false;
+            // Update song
+            song = await Http.GetFromJsonAsync<Song>($"api/songs/{id}") ?? new Song();
+			userRating = 0;
 		}
+	}
+
+	private string GetStarClass(int starNumber)
+	{
+		return starNumber <= userRating ? "text-yellow-400" : "text-gray-400";
+	}
+
+	private void SetRating(int rating)
+	{   
+		Console.WriteLine($"Setting rating to {rating}");
+        if (userRating == rating)
+        {
+            userRating = 0;
+        }
+        else
+        {
+            userRating = rating;
+        }
 	}
 }
 
@@ -71,7 +107,45 @@
             <span class="font-medium text-gray-300">Genre:</span>
             <span class="text-gray-200">@song?.Genre</span>
         </div>
+
+        <div class="flex justify-between text-xl">
+            <span class="font-medium text-gray-300">Average Rating:</span>
+        @if (song?.AverageRating > 0)
+        {
+            <span>
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <span class="@($"text-{(i <= Math.Round(song.AverageRating) ? "yellow" : "gray")}-400") px-2">
+                        @((i <= Math.Round(song.AverageRating)) ? "★" : "☆")
+                    </span>
+                }
+                <span class="text-yellow-400 font-semibold pl-2">@Math.Round(song.AverageRating, 2)</span>
+            </span>
+        }
+        else
+        {
+            <h3 class="text-xl">No rating yet</h3>
+        }
+        </div>
+
+        <div class="flex justify-between text-xl">
+            <span class="font-medium text-gray-300">Rate this song:</span>
+
+            @for (int i = 1; i <= 5; i++)
+            {
+                int ratingValue = i;
+                <span class="cursor-pointer @GetStarClass(ratingValue) text-xl" @onclick="() => SetRating(ratingValue)">★</span>
+            }
+
+            <button class="px-4 bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg" @onclick="SubmitRating">
+                Submit Rating
+            </button>
+        </div>
     </div>
+
+    
+
+    
 
     <div class="mt-6 flex justify-center">
         <button class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg"
