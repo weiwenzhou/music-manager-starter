@@ -47,6 +47,20 @@ namespace music_manager_starter.Server.Controllers
             return playlist;
         }
 
+        [HttpDelete("{id}")] // DELETE: api/Playlists/5
+        public async Task<ActionResult<Playlist>> DeletePlaylist(Guid id)
+        {
+            var playlist = await _context.Playlists.FindAsync(id);
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+            _context.Playlists.Remove(playlist);
+            await _context.SaveChangesAsync();
+            
+            return NoContent();
+        }
+
         [HttpPost("{id}/songs/{songId}")] // POST: api/Playlists/5/songs/5
         public async Task<ActionResult<Playlist>> AddSongToPlaylist(Guid id, Guid songId)
         {

@@ -9,6 +9,7 @@
     private Playlist playlist = new Playlist();
     private bool showAddSongForm = false;
     private bool showDeleteSongConfirmation = false;
+    private bool showDeletePlaylistConfirmation = false;
     private Guid selectedSongId = Guid.Empty;
     private List<Song> availableSongs = new List<Song>();
     private string songTitleToDelete = string.Empty;
@@ -72,13 +73,27 @@
 		selectedSongId = Guid.Empty;
 		songTitleToDelete = string.Empty;
 	}
+
+    private async Task DeletePlaylist()
+    {
+        var response = await Http.DeleteAsync($"api/playlists/{playlist.Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/playlists");
+        }
+    }
 }
 
 <div class="p-6 text-white">
 	<button class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg mb-4" @onclick="GoBack">
 		← Back
 	</button>
-	<h1 class="text-4xl font-semibold">@playlist?.Title</h1>
+    <div class="flex justify-between text-xl mb-2">
+	    <h1 class="text-4xl font-semibold">@playlist?.Title</h1>
+        <button @onclick="() => showDeletePlaylistConfirmation = true" class="mt-6 px-4 py-2 bg-red-600 text-white rounded-lg">
+            Delete Playlist
+        </button>
+    </div>
 	<p class="text-xl text-gray-300 mt-2">Description: @playlist?.Description</p>
 
     <div class="mt-6">
@@ -156,6 +171,20 @@
             <div class="mt-4 flex justify-between">
                 <button @onclick="RemoveSongFromPlaylist" class="bg-red-600 text-white px-4 py-2 rounded">Yes, Delete</button>
                 <button @onclick="CancelDelete" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (showDeletePlaylistConfirmation)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full">
+            <h2 class="text-2xl font-semibold text-gray-200">Confirm Deletion</h2>
+            <p class="text-gray-300 mt-2">Are you sure you want to delete this playlist?</p>
+            <div class="mt-4 flex justify-between">
+                <button @onclick="DeletePlaylist" class="bg-red-600 text-white px-4 py-2 rounded">Yes, Delete Playlist</button>
+                <button @onclick="() => showDeletePlaylistConfirmation = false" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
             </div>
         </div>
     </div>
