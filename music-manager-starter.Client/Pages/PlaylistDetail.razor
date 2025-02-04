@@ -1,0 +1,28 @@
+﻿@page "/playlist/{id}"
+@using music_manager_starter.Shared.Models
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@code {
+	[Parameter] public string id { get; set; } = string.Empty;
+	private Playlist playlist = new Playlist();
+
+	protected override async Task OnInitializedAsync()
+	{
+		playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+	}
+
+	private void GoBack()
+	{
+		NavigationManager.NavigateTo("/playlists");
+	}
+}
+
+<div class="p-6 text-white">
+	<button class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg mb-4" @onclick="GoBack">
+		← Back
+	</button>
+	<h1 class="text-4xl font-semibold">@playlist?.Title</h1>
+	<p class="text-xl text-gray-300 mt-2">Description: @playlist?.Description</p>
+</div>

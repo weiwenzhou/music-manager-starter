@@ -91,7 +91,7 @@
                 @foreach (var (playlist, index) in playlists.Select((playlist, i) => (playlist, i)))
                 {
                     <tr class="border-b hover:bg-gray-600 @(index % 2 == 0 ? "bg-gray-700" : "bg-gray-800")">
-                        <td class="border p-2">@playlist.Title</td>
+                        <td class="border p-2"><a href="/playlist/@playlist.Id" class="underline">@playlist.Title</a></td>
                         <td class="border p-2">@playlist.Description</td>
                         <td class="border p-2">@playlist.Songs.Count</td> <!-- Display the number of songs -->
                     </tr>
