@@ -4,22 +4,81 @@
 @inject HttpClient Http
 
 @code {
-	private List<Playlist> playlists = new List<Playlist>();
+    private List<Playlist> playlists = new List<Playlist>();
+	private bool showCreateForm = false;
+    private Playlist newPlaylist = new Playlist();
+    private string message = string.Empty;
 
 	protected override async Task OnInitializedAsync()
 	{
 		playlists = await Http.GetFromJsonAsync<List<Playlist>>("api/playlists") ?? new List<Playlist>();
 	}
+
+	private async Task HandleValidSubmit()
+	{
+		var response = await Http.PostAsJsonAsync("api/playlists", newPlaylist);
+		if (response.IsSuccessStatusCode)
+		{
+			message = "Playlist added successfully!";
+			newPlaylist = new Playlist();
+		}
+		else
+		{
+			message = "Error adding playlist. Please try again.";
+		}
+	}
+
+	private void CancelForm()
+	{
+		showCreateForm = false;
+		newPlaylist = new Playlist();
+	}
 }
 
-<div class="text-white">
+@if (showCreateForm)
+{
+    <div class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
+            <h2 class="text-xl font-semibold text-white">Add New Playlist</h2>
+            <EditForm Model="newPlaylist" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="mb-4">
+                    <label class="block text-gray-200">Title</label>
+                    <InputText @bind-Value="newPlaylist.Title" class="mt-1 block w-full p-2 border rounded" />
+                    <ValidationMessage For="@(() => newPlaylist.Title)" class="validation-message text-red-500 font-semibold" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-200">Description</label>
+                    <InputText @bind-Value="newPlaylist.Description" class="mt-1 block w-full p-2 border rounded" />
+                </div>
+
+                <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Add Playlist</button>
+                <button type="button" class="bg-gray-300 text-black px-4 py-2 rounded" @onclick="CancelForm">Cancel</button>
+            </EditForm>
+
+            @if (message != null)
+            {
+                <p class="mt-4 text-green-500">@message</p>
+            }
+        </div>
+    </div>
+}
+
+<div class="p-6 text-white">
+    <div class="flex justify-between text-xl my-3">
+        <h2 class="text-3xl font-semibold text-white py-2">Playlists</h2>
+        <button class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg" @onclick="() => showCreateForm = true">
+            Add Playlist
+        </button>
+    </div>
     @if (playlists.Count == 0)
     {
         <p>No playlists available.</p>
     }
     else
     {
-        <h4>Available Playlists</h4>
         <table class="table-auto w-full border-collapse border">
             <thead>
                 <tr>
@@ -29,9 +88,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var playlist in playlists)
+                @foreach (var (playlist, index) in playlists.Select((playlist, i) => (playlist, i)))
                 {
-                    <tr>
+                    <tr class="border-b hover:bg-gray-600 @(index % 2 == 0 ? "bg-gray-700" : "bg-gray-800")">
                         <td class="border p-2">@playlist.Title</td>
                         <td class="border p-2">@playlist.Description</td>
                         <td class="border p-2">@playlist.Songs.Count</td> <!-- Display the number of songs -->
