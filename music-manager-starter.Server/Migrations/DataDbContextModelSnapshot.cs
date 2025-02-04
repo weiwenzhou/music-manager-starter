@@ -17,6 +17,24 @@ namespace music_manager_starter.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("music_manager_starter.Shared.Models.Playlist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Playlists");
+                });
+
             modelBuilder.Entity("music_manager_starter.Shared.Models.Song", b =>
                 {
                     b.Property<Guid>("Id")
@@ -41,6 +59,9 @@ namespace music_manager_starter.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("PlaylistId")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("RatingCount")
                         .HasColumnType("INTEGER");
 
@@ -52,6 +73,8 @@ namespace music_manager_starter.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PlaylistId");
 
                     b.ToTable("Songs");
 
@@ -126,6 +149,18 @@ namespace music_manager_starter.Server.Migrations
                             Title = "Something Real",
                             TotalRatingSum = 0
                         });
+                });
+
+            modelBuilder.Entity("music_manager_starter.Shared.Models.Song", b =>
+                {
+                    b.HasOne("music_manager_starter.Shared.Models.Playlist", null)
+                        .WithMany("Songs")
+                        .HasForeignKey("PlaylistId");
+                });
+
+            modelBuilder.Entity("music_manager_starter.Shared.Models.Playlist", b =>
+                {
+                    b.Navigation("Songs");
                 });
 #pragma warning restore 612, 618
         }
