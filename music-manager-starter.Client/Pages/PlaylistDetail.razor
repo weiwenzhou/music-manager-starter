@@ -48,37 +48,39 @@
 	<p class="text-xl text-gray-300 mt-2">Description: @playlist?.Description</p>
 
     <div class="mt-6">
-        <h2 class="text-2xl font-semibold text-gray-200 mb-4">Songs in this Playlist</h2>
-        <div class="mt-4">
-            <button @onclick="() => showAddSongForm = true" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">
+        <div class="flex justify-between text-xl mb-2">
+            <h2 class="text-2xl font-semibold text-gray-200">Songs in this Playlist</h2>
+            <button @onclick="() => showAddSongForm = true" class="px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">
                 Add Song from Available Songs
             </button>
         </div>
 
         @if (showAddSongForm)
         {
-            <div class="mt-6 bg-gray-700 p-4 rounded-lg">
-                <h2 class="text-2xl font-semibold text-gray-200">Select Song to Add</h2>
-                <div class="mt-4">
-                    <label for="songSelect" class="text-gray-300">Choose a Song</label>
-                    <select id="songSelect" class="mt-1 block w-full p-2 border rounded text-black" @bind="selectedSongId">
-                        <option value="">-- Select a Song --</option>
-                        @foreach (var song in availableSongs.Where(song => !(playlist?.Songs ?? new List<Song>()).Any(s => s.Id == song.Id)))
-                        {
-                            <option value="@song.Id">@song.Title - @song.Artist</option>
-                        }
-                    </select>
-                </div>
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full">
+                    <h2 class="text-2xl font-semibold text-gray-200">Select Song to Add</h2>
+                    <div class="mt-4">
+                        <label for="songSelect" class="text-gray-300">Choose a Song</label>
+                        <select id="songSelect" class="mt-1 block w-full p-2 border rounded text-black" @bind="selectedSongId">
+                            <option value="">-- Select a Song --</option>
+                            @foreach (var song in availableSongs.Where(song => !(playlist?.Songs ?? new List<Song>()).Any(s => s.Id == song.Id)))
+                            {
+                                <option value="@song.Id">@song.Title - @song.Artist</option>
+                            }
+                        </select>
+                    </div>
 
-                <button @onclick="AddSongFromAvailable" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Add Selected Song</button>
-                <button @onclick="() => showAddSongForm = false" class="mt-4 ml-2 bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+                    <button @onclick="AddSongFromAvailable" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Add Selected Song</button>
+                    <button @onclick="() => showAddSongForm = false" class="mt-4 ml-2 bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+                </div>
             </div>
         }
 
 
         @if (playlist?.Songs != null && playlist.Songs.Any())
         {
-            <table class="min-w-full bg-gray-800 text-white rounded-lg">
+            <table class="w-full table-auto border-collapse border border-gray-200">
                 <thead>
                     <tr class="bg-gray-800 border-b text-left text-white">
                         <th class="px-4 py-2"> Title </th>
