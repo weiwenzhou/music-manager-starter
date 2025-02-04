@@ -38,6 +38,15 @@
 			showAddSongForm = false;
 		}
 	}
+
+    private async Task RemoveSongFromPlaylist(Guid songId)
+    {
+        var response = await Http.DeleteAsync($"api/playlists/{playlist.Id}/songs/{songId}");
+        if (response.IsSuccessStatusCode)
+        {
+            playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+        }
+    }
 }
 
 <div class="p-6 text-white">
@@ -87,6 +96,7 @@
                         <th class="px-4 py-2"> Artist </th>
                         <th class="px-4 py-2"> Album </th>
                         <th class="px-4 py-2"> Genre </th>
+                        <th class="px-4 py-2"> Actions </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,6 +107,11 @@
                             <td class="px-4 py-2 text-gray-200">@song.Artist</td>
                             <td class="px-4 py-2 text-gray-200">@song.Album</td>
                             <td class="px-4 py-2 text-gray-200">@song.Genre</td>
+                            <td class="px-4 py-2 text-gray-200">
+                                <button @onclick="() => RemoveSongFromPlaylist(song.Id)" class="bg-red-600 hover:bg-red-500 text-white rounded-lg px-4 py-2">
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
                     }
                 </tbody>

@@ -31,7 +31,7 @@ namespace music_manager_starter.Server.Controllers
             }
             _context.Playlists.Add(playlist);
             await _context.SaveChangesAsync();
-            
+
             return Ok();
         }
 
@@ -43,7 +43,7 @@ namespace music_manager_starter.Server.Controllers
             {
                 return NotFound();
             }
-            
+
             return playlist;
         }
 
@@ -53,13 +53,13 @@ namespace music_manager_starter.Server.Controllers
             var playlist = await _context.Playlists.FindAsync(id);
             if (playlist == null)
             {
-                return NotFound();
+                return NotFound("Playlist not found.");
             }
 
             var song = await _context.Songs.FindAsync(songId);
             if (song == null)
             {
-                return NotFound();
+                return NotFound("Song not found.");
             }
 
             if (!playlist.Songs.Any(s => s.Id == songId))
@@ -72,6 +72,28 @@ namespace music_manager_starter.Server.Controllers
             }
 
             return playlist;
+        }
+
+        [HttpDelete("{id}/songs/{songId}")] // DELETE: api/Playlists/5/songs/5
+        public async Task<ActionResult<Song>> DeleteSong(Guid id, Guid songId)
+        {
+            var playlist = await _context.Playlists.Include(p => p.Songs).FirstOrDefaultAsync(p => p.Id == id);
+            if (playlist == null)
+            {
+                return NotFound("Playlist not found.");
+            }
+
+            var song = playlist.Songs.FirstOrDefault(s => s.Id == songId);
+
+            if (song == null)
+            {
+                return NotFound("Song not found in this playlist.");
+            }
+
+            playlist.Songs.Remove(song);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
