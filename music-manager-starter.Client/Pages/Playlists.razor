@@ -1,0 +1,44 @@
+﻿@page "/playlists"
+@using music_manager_starter.Shared.Models
+
+@inject HttpClient Http
+
+@code {
+	private List<Playlist> playlists = new List<Playlist>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		playlists = await Http.GetFromJsonAsync<List<Playlist>>("api/playlists") ?? new List<Playlist>();
+	}
+}
+
+<div class="text-white">
+    @if (playlists.Count == 0)
+    {
+        <p>No playlists available.</p>
+    }
+    else
+    {
+        <h4>Available Playlists</h4>
+        <table class="table-auto w-full border-collapse border">
+            <thead>
+                <tr>
+                    <th class="border p-2">Name</th>
+                    <th class="border p-2">Description</th>
+                    <th class="border p-2">Number of Songs</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var playlist in playlists)
+                {
+                    <tr>
+                        <td class="border p-2">@playlist.Title</td>
+                        <td class="border p-2">@playlist.Description</td>
+                        <td class="border p-2">@playlist.Songs.Count</td> <!-- Display the number of songs -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
