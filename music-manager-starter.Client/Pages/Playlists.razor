@@ -5,22 +5,26 @@
 
 @code {
     private List<Playlist> playlists = new List<Playlist>();
-	private bool showCreateForm = false;
+    private bool showCreateForm = false;
     private Playlist newPlaylist = new Playlist();
     private string message = string.Empty;
 
-	protected override async Task OnInitializedAsync()
-	{
-		playlists = await Http.GetFromJsonAsync<List<Playlist>>("api/playlists") ?? new List<Playlist>();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        playlists = await Http.GetFromJsonAsync<List<Playlist>>("api/playlists") ?? new List<Playlist>();
+    }
 
-	private async Task HandleValidSubmit()
-	{
-		var response = await Http.PostAsJsonAsync("api/playlists", newPlaylist);
-		if (response.IsSuccessStatusCode)
-		{
-			message = "Playlist added successfully!";
-			newPlaylist = new Playlist();
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PostAsJsonAsync("api/playlists", newPlaylist);
+        if (response.IsSuccessStatusCode)
+        {
+            message = "Playlist added successfully!";
+            newPlaylist = new Playlist();
+            showCreateForm = false;
+
+            // Refresh the list of playlists
+            playlists = await Http.GetFromJsonAsync<List<Playlist>>("api/playlists") ?? new List<Playlist>();
 		}
 		else
 		{
