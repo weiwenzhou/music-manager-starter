@@ -50,11 +50,17 @@ namespace music_manager_starter.Server.Controllers
         [HttpDelete("{id}")] // DELETE: api/Playlists/5
         public async Task<ActionResult<Playlist>> DeletePlaylist(Guid id)
         {
-            var playlist = await _context.Playlists.FindAsync(id);
+            var playlist = await _context.Playlists.Include(p => p.Songs).FirstOrDefaultAsync(p => p.Id == id);
             if (playlist == null)
             {
                 return NotFound();
             }
+
+            // Remove all songs from the playlist
+            playlist.Songs.Clear();
+            await _context.SaveChangesAsync();
+
+
             _context.Playlists.Remove(playlist);
             await _context.SaveChangesAsync();
             
