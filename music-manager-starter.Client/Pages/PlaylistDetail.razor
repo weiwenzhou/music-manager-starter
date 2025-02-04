@@ -5,17 +5,38 @@
 @inject NavigationManager NavigationManager
 
 @code {
-	[Parameter] public string id { get; set; } = string.Empty;
-	private Playlist playlist = new Playlist();
+    [Parameter] public string id { get; set; } = string.Empty;
+    private Playlist playlist = new Playlist();
+    private bool showAddSongForm = false;
+    private Guid selectedSongId = Guid.Empty;
+    private List<Song> availableSongs = new List<Song>();
 
 	protected override async Task OnInitializedAsync()
 	{
 		playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+
+		// Fetch list of available songs
+        availableSongs = await Http.GetFromJsonAsync<List<Song>>("api/songs") ?? new List<Song>();
 	}
 
 	private void GoBack()
 	{
 		NavigationManager.NavigateTo("/playlists");
+	}
+
+	private async Task AddSongFromAvailable()
+	{
+		if (selectedSongId == Guid.Empty)
+		{
+			return;
+		}
+		var response = await Http.PostAsync($"api/playlists/{playlist.Id}/songs/{selectedSongId}", null);
+		if (response.IsSuccessStatusCode)
+		{
+			playlist = await Http.GetFromJsonAsync<Playlist>($"api/playlists/{id}") ?? new Playlist();
+			selectedSongId = Guid.Empty;
+			showAddSongForm = false;
+		}
 	}
 }
 
@@ -25,4 +46,63 @@
 	</button>
 	<h1 class="text-4xl font-semibold">@playlist?.Title</h1>
 	<p class="text-xl text-gray-300 mt-2">Description: @playlist?.Description</p>
+
+    <div class="mt-6">
+        <h2 class="text-2xl font-semibold text-gray-200 mb-4">Songs in this Playlist</h2>
+        <div class="mt-4">
+            <button @onclick="() => showAddSongForm = true" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">
+                Add Song from Available Songs
+            </button>
+        </div>
+
+        @if (showAddSongForm)
+        {
+            <div class="mt-6 bg-gray-700 p-4 rounded-lg">
+                <h2 class="text-2xl font-semibold text-gray-200">Select Song to Add</h2>
+                <div class="mt-4">
+                    <label for="songSelect" class="text-gray-300">Choose a Song</label>
+                    <select id="songSelect" class="mt-1 block w-full p-2 border rounded text-black" @bind="selectedSongId">
+                        <option value="">-- Select a Song --</option>
+                        @foreach (var song in availableSongs.Where(song => !(playlist?.Songs ?? new List<Song>()).Any(s => s.Id == song.Id)))
+                        {
+                            <option value="@song.Id">@song.Title - @song.Artist</option>
+                        }
+                    </select>
+                </div>
+
+                <button @onclick="AddSongFromAvailable" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Add Selected Song</button>
+                <button @onclick="() => showAddSongForm = false" class="mt-4 ml-2 bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+            </div>
+        }
+
+
+        @if (playlist?.Songs != null && playlist.Songs.Any())
+        {
+            <table class="min-w-full bg-gray-800 text-white rounded-lg">
+                <thead>
+                    <tr class="bg-gray-800 border-b text-left text-white">
+                        <th class="px-4 py-2"> Title </th>
+                        <th class="px-4 py-2"> Artist </th>
+                        <th class="px-4 py-2"> Album </th>
+                        <th class="px-4 py-2"> Genre </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var (song, index) in playlist.Songs.Select((song, i) => (song, i)))
+                    {
+                        <tr class="border-b hover:bg-gray-600 @(index % 2 == 0 ? "bg-gray-700" : "bg-gray-800")">
+                            <td class="px-4 py-2 text-gray-200"><a href="/song/@song.Id" class="underline">@song.Title</a></td>
+                            <td class="px-4 py-2 text-gray-200">@song.Artist</td>
+                            <td class="px-4 py-2 text-gray-200">@song.Album</td>
+                            <td class="px-4 py-2 text-gray-200">@song.Genre</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-gray-400">No songs in this playlist yet.</p>
+        }
+    </div>
 </div>

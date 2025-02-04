@@ -19,7 +19,7 @@ namespace music_manager_starter.Server.Controllers
         [HttpGet] // GET: api/Playlists
         public async Task<ActionResult<IEnumerable<Playlist>>> GetPlaylists()
         {
-            return await _context.Playlists.ToListAsync();
+            return await _context.Playlists.Include(p => p.Songs).ToListAsync();
         }
 
         [HttpPost] // POST: api/Playlists
@@ -33,6 +33,45 @@ namespace music_manager_starter.Server.Controllers
             await _context.SaveChangesAsync();
             
             return Ok();
+        }
+
+        [HttpGet("{id}")] // GET: api/Playlists/5
+        public async Task<ActionResult<Playlist>> GetPlaylist(Guid id)
+        {
+            var playlist = await _context.Playlists.Include(p => p.Songs).FirstOrDefaultAsync(p => p.Id == id);
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+            
+            return playlist;
+        }
+
+        [HttpPost("{id}/songs/{songId}")] // POST: api/Playlists/5/songs/5
+        public async Task<ActionResult<Playlist>> AddSongToPlaylist(Guid id, Guid songId)
+        {
+            var playlist = await _context.Playlists.FindAsync(id);
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+
+            var song = await _context.Songs.FindAsync(songId);
+            if (song == null)
+            {
+                return NotFound();
+            }
+
+            if (!playlist.Songs.Any(s => s.Id == songId))
+            {
+                _context.Entry(song).State = EntityState.Unchanged;
+                playlist.Songs.Add(song);
+
+                _context.Entry(playlist).Collection(p => p.Songs).IsModified = true;
+                await _context.SaveChangesAsync();
+            }
+
+            return playlist;
         }
     }
 }
