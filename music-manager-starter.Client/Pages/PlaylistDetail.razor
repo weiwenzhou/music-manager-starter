@@ -41,6 +41,12 @@
         }
     }
 
+	private void CancelAdd()
+	{
+		selectedSongId = Guid.Empty;
+		showAddSongForm = false;
+	}
+
     private async Task RemoveSongFromPlaylist()
     {
         var response = await Http.DeleteAsync($"api/playlists/{playlist.Id}/songs/{selectedSongId}");
@@ -100,7 +106,7 @@
                     </div>
 
                     <button @onclick="AddSongFromAvailable" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Add Selected Song</button>
-                    <button @onclick="() => showAddSongForm = false" class="mt-4 ml-2 bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+                    <button @onclick="CancelAdd" class="mt-4 ml-2 bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
                 </div>
             </div>
         }
